@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PARA MI NIÑA</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+        }
+
+        .space {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .progress-container {
+            width: 200px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 51, 153, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff3399, #ff66aa);
+            box-shadow: 0 0 10px #ff3399;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .heart-icon-counter {
+            color: #ff3399;
+            font-size: 12px;
+            margin-bottom: 5px;
+            z-index: 10;
+            text-shadow: 0 0 5px #ff3399;
+        }
+
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 51, 153, 0.3);
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBackground linear infinite;
+        }
+
+        @keyframes floatBackground {
+            0% { transform: translateY(110vh) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) rotate(360deg) translateX(50px); opacity: 0; }
+        }
+
+        .content-border {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+            width: fit-content;
+            max-width: 90%;
+            border: 4px solid transparent;
+            border-image: linear-gradient(var(--angle), #ff3399, #ff66aa, #ff0055, #ff3399) 1;
+            animation: rotateBorder 4s linear infinite;
+            z-index: 2;
+            background: rgba(0,0,0,0.2);
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotateBorder { to { --angle: 360deg; } }
+
+        .dudu {
+            position: relative;
+            margin-top: 20px;
+            width: 140px;
+            height: 140px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 10;
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/dcb5f0e5-306a-45a8-8a79-6e7073a33376/d6uvo9y-4bcfa515-0639-4766-af97-c3c60fb1839c.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2RjYjVmMGU1LTMwNmEtNDVhOC04YTc5LTZlNzA3M2EzMzM3NlwvZDZ1dm85eS00YmNmYTUxNS0wNjM5LTQ3NjYtYWY5Ny1jM2M2MGZiMTgzOWMuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.MhmmFonwXn1VGvgKvdKNdLCUNDtvL0rUoM_4_ZZSrI4');
+        }
+
+        .heart {
+            position: absolute;
+            color: #ff3399;
+            font-size: 20px;
+            animation: heartFloat 1.5s ease-out forwards;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .letter {
+            color: #ff3399;
+            font-size: 7.5vw;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 51, 153, 0.8);
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s ease-out;
+            display: inline-block;
+        }
+
+        .letter.active { opacity: 1; transform: scale(1); }
+
+        .letter.final-glow {
+            animation: glowText 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowText {
+            from { text-shadow: 0 0 10px #ff3399, 0 0 20px #ff3399; }
+            to { text-shadow: 0 0 20px #ff66aa, 0 0 40px #ff0055, 0 0 10px #fff; }
+        }
+
+        #word-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 160px;
+        }
+
+        .word-line {
+            display: flex;
+            justify-content: center;
+            margin: 2px 0;
+        }
+
+        .special-space { width: 10px; }
+
+        .btn-container {
+            margin-top: 20px;
+            display: none;
+            gap: 15px;
+            z-index: 20;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #ff3399;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff3399;
+            transition: transform 0.2s;
+        }
+
+        .nav-btn:active { transform: scale(0.9); }
+
+        @keyframes heartFloat {
+            0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.4); opacity: 0; }
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        @keyframes twinkle { from { opacity: 0.3; } to { opacity: 1; } }
+
+        .infinite-heart {
+            position: absolute;
+            color: #ff3399;
+            animation: infiniteHeartRain linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes infiniteHeartRain {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- CASTILLO DE CORAZONES EXPLOSIVOS --- */
+        .castle-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            filter: drop-shadow(0 0 10px currentColor);
+            animation: castleExplosion 1.8s cubic-bezier(0.12, 0, 0.39, 0) forwards;
+        }
+
+        @keyframes castleExplosion {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            40% { opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--sz)) rotate(1080deg); opacity: 0; }
+        }
+
+        .floating-piropo {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 51, 153, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 60px;
+            border: 3px solid #ff3399;
+            box-shadow: 0 0 30px #ff3399;
+            color: white;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            width: 95%;
+            max-width: 400px;
+            animation: piropoEntry 0.8s ease-out forwards;
+        }
+
+        .piropo-text {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 10px #ff3399;
+            flex-grow: 1;
+            padding: 0 10px;
+        }
+
+        .arrow-btn {
+            background: none;
+            border: none;
+            color: #ffcc00;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            text-shadow: 0 0 10px #ff3399;
+            transition: transform 0.2s, color 0.3s;
+            padding: 0 10px;
+        }
+
+        /* --- ESTILO REPRODUCTOR MUSICAL --- */
+        .music-player {
+            margin-top: 25px;
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 51, 153, 0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 51, 153, 0.4);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(255, 51, 153, 0.2);
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .music-btn {
+            background: #ff3399;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px #ff3399;
+            transition: 0.3s;
+        }
+
+        .music-btn:hover { transform: scale(1.1); background: #ff66aa; }
+
+        .song-info {
+            color: #ff66aa;
+            font-size: 12px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: center;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div class="space" id="mainContent">
+        <div id="stars"></div>
+        <div id="bg-hearts-container"></div>
+        
+        <div class="heart-icon-counter">Progreso de Amor ❤</div>
+        <div class="progress-container">
+            <div id="progress-fill"></div>
+        </div>
+
+        <div class="content-border">
+            <div id="word-container"></div>
+            
+            <div id="piropo-container" class="floating-piropo">
+                <button id="btn-prev" class="arrow-btn" onclick="otroPiropo(-1)">&lt;</button>
+                <div id="piropo-text" class="piropo-text"></div>
+                <button id="btn-next-arrow" class="arrow-btn" onclick="otroPiropo(1)">&gt;</button>
+            </div>
+
+            <div class="dudu" id="dudu"></div>
+        </div>
+
+        <div class="btn-container" id="btn-container">
+            <button class="nav-btn" onclick="fraseAnterior()">ANTERIOR ❤</button>
+            <button class="nav-btn" id="next-btn" onclick="cambiarFrase()">SIGUIENTE ❤</button>
+        </div>
+
+        <div class="music-player">
+            <div id="song-name" class="song-info">Presiona Play para oírte 🌹</div>
+            <div class="music-controls">
+                <button class="music-btn" onclick="prevSong()">⏮</button>
+                <button class="music-btn" id="play-pause" onclick="togglePlay()">▶</button>
+                <button class="music-btn" onclick="nextSong()">⏭</button>
+            </div>
+            <audio id="audio-player"></audio>
+        </div>
+    </div>
+
+    <script>
+        const wordContainer = document.getElementById('word-container');
+        const duduElement = document.getElementById('dudu');
+        const btnContainer = document.getElementById('btn-container');
+        const nextBtn = document.getElementById('next-btn');
+        const progressFill = document.getElementById('progress-fill');
+        const piropoContainer = document.getElementById('piropo-container');
+        const piropoText = document.getElementById('piropo-text');
+
+        // MÚSICA - CARGA DE ARCHIVOS DESDE TU REPOSITORIO
+        const audioPlayer = document.getElementById('audio-player');
+        const playBtn = document.getElementById('play-pause');
+        const songName = document.getElementById('song-name');
+
+        let playlist = [
+            { name: "Pensando en ti", url: "LÚA - Pensando en ti.mp3" }, 
+            { name: "Bonita", url: "Una canción bonita.mp3" },
+            { name: "una cita", url: "Cita - Layl.mp3" }
+        ];
+        
+        let currentSongIndex = 0;
+
+        function loadSong(index) {
+            audioPlayer.src = playlist[index].url;
+            songName.innerText = playlist[index].name;
+        }
+
+        function togglePlay() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playBtn.innerText = "⏸";
+            } else {
+                audioPlayer.pause();
+                playBtn.innerText = "▶";
+            }
+        }
+
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % playlist.length;
+            loadSong(currentSongIndex);
+            audioPlayer.play();
+            playBtn.innerText = "⏸";
+        }
+
+        function prevSong() {
+            currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+            loadSong(currentSongIndex);
+            audioPlayer.play();
+            playBtn.innerText = "⏸";
+        }
+
+        let frases = [
+            ["TÚ ERES MI", "NIÑA MÁS", "BONITA DEL", "MUNDO"],
+            ["CUANDO MIRES", "LAS ESTRELLAS", "ACUÉRDATE DE MÍ,", "QUE EN CADA UNA", "HAY UN BESO", "PARA TI"],
+            ["SI LAS ESTRELLAS", "BRILLAN ES PORQUE", "REFLEJAN LA LUZ", "DE TU SONRISA"],
+            ["DESPIERTO", "PIENSO EN TI Y", "DORMIDO SUEÑO", "CONTIGO"],
+            ["ERES EL SOL", "QUE ILUMINA", "MI CIELO", "CADA DÍA"],
+            ["SI TE DIGO", "QUE TE QUIERO,", "ME QUEDO CORTO,", "TE AMO ❤"],
+            ["ERES MI DESTINO", "FAVORITO Y MI", "LUGAR SEGURO", "EN EL MUNDO"],
+            ["ERES LO MÁS", "VALIOSO QUE LA", "VIDA ME HA", "REGALADO"],
+            ["NI EL CHOCOLATE", "ME DULZA TANTO", "COMO TU LINDA", "MIRADA"],
+            ["TU AMOR ES EL", "REGALO QUE NUNCA", "SABÍA QUE", "NECESITABA"],
+            ["SI FUERAS UNA", "CANCIÓN, SERÍAS", "MI MELODÍA", "FAVORITA"],
+            ["CONTIGO LA VIDA", "ES MUCHO MÁS", "COLORIDA Y", "HERMOSA"]
+        ];
+
+        let piropos = [
+            "✨Eres la dueña de mis suspiros✨",
+            "💖Mi lugar favorito es entre tus brazos💖",
+            "🌟Eres el brillo más lindo de mi universo🌟",
+            "👑Eres mi única princesa👑",
+            "🌸Cada segundo contigo es un tesoro🌸"
+        ];
+
+        let fraseActual = 0;
+        let piropoActual = 0;
+        let finalExplosionInterval;
+
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.width = star.style.height = `${Math.random() * 2}px`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            starsContainer.appendChild(star);
+        }
+
+        function updateCounter() {
+            const percentage = ((fraseActual + 1) / frases.length) * 100;
+            progressFill.style.width = percentage + '%';
+        }
+
+        function createBackgroundHearts() {
+            const bgContainer = document.getElementById('bg-hearts-container');
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const h = document.createElement('div');
+                    h.classList.add('bg-heart');
+                    h.innerHTML = '❤';
+                    h.style.left = Math.random() * 100 + 'vw';
+                    h.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                    h.style.animationDuration = (Math.random() * 5 + 10) + 's';
+                    h.style.opacity = Math.random() * 0.5;
+                    bgContainer.appendChild(h);
+                }, i * 800);
+            }
+        }
+
+        function createCastleExplosion() {
+            const rect = piropoContainer.getBoundingClientRect();
+            const startX = rect.left + rect.width / 2;
+            const startY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 70; i++) {
+                const h = document.createElement('div');
+                h.classList.add('castle-heart');
+                h.innerHTML = i % 3 === 0 ? '💖' : '❤';
+                const hColor = Math.random() * 360;
+                h.style.color = `hsl(${hColor}, 100%, 75%)`;
+                const baseSize = i % 5 === 0 ? Math.random() * 40 + 40 : Math.random() * 15 + 10;
+                h.style.fontSize = baseSize + 'px';
+                h.style.left = startX + 'px';
+                h.style.top = startY + 'px';
+                const angle = Math.random() * Math.PI * 2;
+                const dist = Math.random() * 800 + 100; 
+                const dx = Math.cos(angle) * dist;
+                const dy = Math.sin(angle) * dist;
+                const finalScale = Math.random() * 1.5 + 0.2;
+                h.style.setProperty('--dx', `${dx}px`);
+                h.style.setProperty('--dy', `${dy}px`);
+                h.style.setProperty('--sz', finalScale);
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 1800);
+            }
+        }
+
+        function mostrarPiropo() {
+            piropoActual = Math.floor(Math.random() * piropos.length);
+            piropoText.innerText = piropos[piropoActual];
+            piropoContainer.style.display = 'flex';
+            document.querySelectorAll('.letter').forEach(l => l.classList.add('final-glow'));
+            createCastleExplosion();
+            if(finalExplosionInterval) clearInterval(finalExplosionInterval);
+            finalExplosionInterval = setInterval(createCastleExplosion, 1500); 
+        }
+
+        function otroPiropo(dir) {
+            piropoActual = (piropoActual + dir + piropos.length) % piropos.length;
+            piropoText.innerText = piropos[piropoActual];
+            const colorIzq = `hsl(${Math.random() * 360}, 100%, 75%)`;
+            const colorDer = `hsl(${(Math.random() * 360 + 180) % 360}, 100%, 75%)`;
+            document.getElementById('btn-prev').style.color = colorIzq;
+            document.getElementById('btn-next-arrow').style.color = colorDer;
+            createCastleExplosion();
+        }
+
+        function limpiarFinal() {
+            piropoContainer.style.display = 'none';
+            if(finalExplosionInterval) clearInterval(finalExplosionInterval);
+            document.querySelectorAll('.letter').forEach(l => l.classList.remove('final-glow'));
+        }
+
+        function escribirFrase(index) {
+            limpiarFinal();
+            updateCounter();
+            wordContainer.innerHTML = '';
+            btnContainer.style.display = 'none';
+            frases[index].forEach(text => {
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('word-line');
+                text.split('').forEach(char => {
+                    const span = document.createElement('span');
+                    span.classList.add('letter');
+                    if (char === ' ') span.classList.add('special-space');
+                    else span.textContent = char;
+                    lineDiv.appendChild(span);
+                });
+                wordContainer.appendChild(lineDiv);
+            });
+            animate();
+        }
+
+        function animate() {
+            const letterElements = document.querySelectorAll('.letter:not(.active):not(.special-space)');
+            let i = 0;
+            function step() {
+                if (i >= letterElements.length) {
+                    btnContainer.style.display = 'flex';
+                    if(fraseActual === frases.length - 1) {
+                        nextBtn.textContent = "REPETIR ❤";
+                        mostrarPiropo(); 
+                    } else {
+                        nextBtn.textContent = "SIGUIENTE ❤";
+                    }
+                    startRain();
+                    return;
+                }
+                const letter = letterElements[i];
+                const duduRect = duduElement.getBoundingClientRect();
+                const letRect = letter.getBoundingClientRect();
+                const startX = duduRect.left + duduRect.width / 2;
+                const startY = duduRect.top + duduRect.height / 2;
+                for (let j = 0; j < 5; j++) {
+                    const h = document.createElement('div');
+                    h.classList.add('heart');
+                    h.innerHTML = '❤';
+                    h.style.left = startX + 'px';
+                    h.style.top = startY + 'px';
+                    const tx = (letRect.left - startX) + (Math.random() * 20 - 10);
+                    const ty = (letRect.top - startY) + (Math.random() * 20 - 10);
+                    h.style.setProperty('--tx', `${tx}px`);
+                    h.style.setProperty('--ty', `${ty}px`);
+                    document.body.appendChild(h);
+                    setTimeout(() => h.remove(), 1500);
+                }
+                letter.classList.add('active');
+                i++;
+                setTimeout(step, 100);
+            }
+            step();
+        }
+
+        function cambiarFrase() {
+            fraseActual = (fraseActual + 1) % frases.length;
+            escribirFrase(fraseActual);
+        }
+
+        function fraseAnterior() {
+            fraseActual = (fraseActual - 1 + frases.length) % frases.length;
+            escribirFrase(fraseActual);
+        }
+
+        let rainInterval;
+        function startRain() {
+            if (rainInterval) return;
+            rainInterval = setInterval(() => {
+                const h = document.createElement('div');
+                h.classList.add('infinite-heart');
+                h.innerHTML = '❤';
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                h.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 5000);
+            }, 300);
+        }
+
+        window.onload = () => {
+            escribirFrase(0);
+            createBackgroundHearts();
+            loadSong(0);
+        };
+    </script>
+</body>
+</html>
